@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>HCLY Overlay</title>
+    <script src="js/config.js"></script>
+    <link rel="styleSheet" href="index.css">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+
+<body>
+    <script>
+        const { remote, shell } = require('electron');
+        const currentWindow = remote.getCurrentWindow();
+        const config = new Config('./config.json');
+        window.onload = () => {
+            let setup = !isNullOrEmpty(config.get('logPath')) && !isNullOrEmpty(config.get('apiKey'));
+            if (config.get('lang') == 'en_us')
+                if (setup)
+                    return window.location.href = './main.html';
+                else
+                    return window.location.href = './setup_en.html';
+            if (config.get('lang') == 'zh_cn')
+                if (setup)
+                    return window.location.href = './main.html';
+                else
+                    return window.location.href = './setup_zh.html';
+            document.getElementById('lang').hidden = false;
+        }
+        const isNullOrEmpty = (obj) => obj == null || obj == '';
+    </script>
+    <div id="menu" class="menu">
+        <div class="title" style="position:absolute;left:5px;top:-5px">HCLY</div>
+        <div id="buttons" style="float:right;margin-right:5px;margin-top:2px;">
+            <button id="minimize" onclick="currentWindow.minimize()"></button>
+            <button id="quit" onclick="currentWindow.close()"></button>
+        </div>
+    </div>
+    <div id="lang" style="color:yellow;font-family:consolas;" hidden>
+        <h2>&nbsp Please Select Your Language</h2>
+        <h2>&nbsp 请选择你的语言</h2>
+        <button class="setting_button" style="left:20px;position:relative;height:30px"
+            onclick="config.set('lang', 'en_us');window.location.href='./index.html'">English</button>
+        <button class="setting_button" style="left:20px;position:relative;height:30px"
+            onclick="config.set('lang', 'zh_cn');window.location.href='./index.html'">中文</button>
+    </div>
+</body>
